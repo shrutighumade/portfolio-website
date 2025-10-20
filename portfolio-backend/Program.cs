@@ -8,21 +8,16 @@ builder.Services.AddControllers();
 
 // Configure MySQL Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
-// Auto apply EF migrations on startup (optional but handy)
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    db.Database.Migrate();
-}
 
 // Enable CORS for frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
-        policy.WithOrigins("https://portfolio-website-swart-ten-61.vercel.app/") // frontend URL (Vite default)
+        policy.WithOrigins("https://portfolio-website-swart-ten-61.vercel.app") // ✅ Remove trailing slash
               .AllowAnyHeader()
               .AllowAnyMethod()
     );
@@ -33,6 +28,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// ✅ Auto apply EF migrations after app is built
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 // Configure middleware
 if (app.Environment.IsDevelopment())
