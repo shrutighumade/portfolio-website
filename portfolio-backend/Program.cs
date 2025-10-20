@@ -16,7 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
-        policy.WithOrigins("http://localhost:5173") // frontend URL (Vite default)
+        policy.WithOrigins("https://portfolio-website-swart-ten-61.vercel.app/") // frontend URL (Vite default)
               .AllowAnyHeader()
               .AllowAnyMethod()
     );
